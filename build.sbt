@@ -26,7 +26,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "scalatags" % "0.5.5",
-    "org.scala-js" %%% "scalajs-dom" % "0.9.0"
+    "org.scala-js" %%% "scalajs-dom" % "0.9.0",
+    "com.lihaoyi" %%% "upickle" % "0.4.1"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
