@@ -25,7 +25,8 @@ lazy val client = (project in file("client")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.0"
+    "com.lihaoyi" %%% "scalatags" % "0.5.5",
+    "org.scala-js" %%% "scalajs-dom" % "0.9.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
@@ -44,3 +45,5 @@ onLoad in Global := (Command.process("project server", _: State)) compose (onLoa
 EclipseKeys.skipParents in ThisBuild := false
 // Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present
 EclipseKeys.preTasks := Seq(compile in (server, Compile))
+
+scalaJSUseRhino in Global := false
