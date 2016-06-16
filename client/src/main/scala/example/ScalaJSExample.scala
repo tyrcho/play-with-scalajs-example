@@ -1,13 +1,11 @@
 package example
 
-import scalatags.JsDom.all._
-import org.scalajs.dom
-
-import scalajs.js
-import scala.scalajs.js
 import org.scalajs.dom
 import org.scalajs.dom.MouseEvent
 import shared.SharedMessages
+
+import scala.scalajs.js
+import scalatags.JsDom.all._
 
 object ScalaJSExample extends js.JSApp {
   val doc = dom.document
@@ -22,5 +20,5 @@ object ScalaJSExample extends js.JSApp {
     }
   }
 
-  def cb = input(`type` := "checkbox", id := "cb").render
+  val cb = input(`type` := "checkbox", id := "cb").render
 }
