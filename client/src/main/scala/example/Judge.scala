@@ -1,5 +1,7 @@
 package example
 
+import ConfigComponent._
+
 object Judge {
 
   def build(config: Config) = {
@@ -10,7 +12,7 @@ object Judge {
 
   def candidates(c: Config) = for {
     (op, gen) <- ALL_OP zip ALL_GEN
-    if c.toMap(op)
+    if c(op)
   } yield gen
 
   private def nextInt() =
@@ -23,5 +25,4 @@ object Judge {
   val SUB: OperationGenerator = (a, b) => Question(s"${a + b} - $b", s"${a}")
   val DIV: OperationGenerator = (a, b) => Question(s"${a * b} / $b", s"${a}")
   val ALL_GEN = Seq(ADD, SUB, MUL, DIV)
-  val ALL_OP = Seq("+", "-", "x", "/")
 }

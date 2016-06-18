@@ -15,7 +15,7 @@ object ScalaJSExample extends js.JSApp {
   def main() = {
     val root = document.getElementById("root")
     root.appendChild(div(
-      configZone,
+      ConfigComponent.render,
       questionZone,
       div(box),
       output).render)
@@ -24,22 +24,7 @@ object ScalaJSExample extends js.JSApp {
 
   val questionZone = div("question", style := "font-size:10vw").render
 
-  def configCB(label: String) = {
-    val i = input(
-      `type` := "checkbox",
-      name := label,
-      id := label,
-      value := label,
-      checked := config.toMap(label)).render
-    i.onchange = (e: Event) => (ConfigStore.writeConf(config.updated(label, i.checked)))
-    div(i, label).render
-  }
-
-  val configZone = div(
-    Seq("+", "-", "x", "/").map(configCB),
-    style := "font-size:2vw;display:flex").render
-
-  def config = ConfigStore.readConf
+  
 
   val box = input(
     `type` := "text",
@@ -61,7 +46,7 @@ object ScalaJSExample extends js.JSApp {
   }
 
   def showNextQuestion() = {
-    question = Some(Judge.build(config))
+    question = Some(Judge.build(ConfigComponent.config))
     questionZone.innerHTML = question.get.q
   }
 }
