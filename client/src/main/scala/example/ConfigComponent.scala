@@ -1,16 +1,13 @@
 package example
 
-import org.scalajs.dom.ext._
-import scala.scalajs.js.JSON
-import org.scalajs.dom
-import upickle.default._
-import org.scalajs.dom
-import org.scalajs.dom.MouseEvent
-import shared.SharedMessages
-
 import scala.scalajs.js
-import scalatags.JsDom.all._
+import scala.scalajs.js.Any._
+
+import org.scalajs.dom.ext.LocalStorage
 import org.scalajs.dom.raw.Event
+
+import scalatags.JsDom.all._
+import upickle.default._
 
 object ConfigComponent {
   val ALL_OP = Seq("+", "-", "x", "/")
@@ -21,12 +18,21 @@ object ConfigComponent {
       style := "font-size:2vw;display:flex").render
 
   def config = ConfigStore.readConf
+  def level = ConfigStore.readLevel
 
   def configCB(label: String) = {
     val i = input(`type` := "checkbox").render
     if (config(label)) i.checked = true
     i.onchange = (e: Event) => (ConfigStore.writeConf(config.updated(label, i.checked)))
-    div(i, label).render
+    val level = input(
+      id := label + "level",
+      value := ConfigStore.readLevel(label),
+      style := "width:2vw",
+      `type` := "number",
+      min := "1",
+      max := "10").render
+    level.onchange = (e: Event) => (ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, level.value.toInt)))
+    div(i, label, level).render
   }
 
   object ConfigStore {
@@ -39,7 +45,17 @@ object ConfigComponent {
     def writeConf(c: Config) =
       LocalStorage.update("config", write(c))
 
+    def readLevel: Level =
+      LocalStorage("levels") match {
+        case None    => ALL_OP.map(o => o -> 2).toMap
+        case Some(l) => read[Level](l)
+      }
+
+    def writeLevel(c: Level) =
+      LocalStorage.update("levels", write(c))
+
   }
 
   type Config = Map[String, Boolean]
+  type Level = Map[String, Int]
 }

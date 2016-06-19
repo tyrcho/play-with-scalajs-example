@@ -1,53 +1,45 @@
 package example
 
-import org.scalajs.dom
-import org.scalajs.dom.MouseEvent
-import shared.SharedMessages
-
 import scala.scalajs.js
+import scala.scalajs.js.Any._
+
+import org.scalajs.dom.raw.KeyboardEvent
+
 import scalatags.JsDom.all._
-import org.scalajs.dom.raw.Event
+import org.scalajs.dom.raw.MouseEvent
 
 object ScalaJSExample extends js.JSApp {
   val document = js.Dynamic.global.document
-  var question: Option[Question] = None
+  val root = document.getElementById("root")
+
+  SessionComponent.ended = () => {
+    startButton.disabled = false
+    root.removeChild(SessionComponent.render)
+  }
 
   def main() = {
-    val root = document.getElementById("root")
-    root.appendChild(div(
-      ConfigComponent.render,
-      questionZone,
-      div(box),
-      output).render)
-    showNextQuestion()
+    root.appendChild(
+      div(
+        style := "display:flex",
+        ConfigComponent.render,
+        startButton)
+        .render)
   }
 
-  val questionZone = div("question", style := "font-size:10vw").render
-
-  
-
-  val box = input(
-    `type` := "text",
-    autofocus := true,
-    style := "font-size:10vw;display:flex",
-    placeholder := "?").render
-
-  val output = div(style := "font-size:3vw").render
-
-  box.onkeyup = (e: dom.Event) => checkAnswer()
-
-  def checkAnswer() = {
-    if (box.value == question.get.a) {
-      output.insertBefore(div(question.get.toString).render, output.firstChild)
-      showNextQuestion()
-      box.value = ""
-      box.focus()
-    }
+  val startButton = {
+    val i = input(
+      `type` := "button",
+      value := "Start",
+      style := "font-size:4vw").render
+    i.onclick = (e: MouseEvent) => startSession()
+    i
   }
 
-  def showNextQuestion() = {
-    question = Some(Judge.build(ConfigComponent.config))
-    questionZone.innerHTML = question.get.q
+  def startSession() {
+    startButton.disabled = true
+    root.appendChild(SessionComponent.render)
+    SessionComponent.startSession()
   }
+
 }
 
