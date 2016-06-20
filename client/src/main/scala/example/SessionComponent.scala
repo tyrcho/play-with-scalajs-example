@@ -48,9 +48,21 @@ object SessionComponent {
     val sign = if (session.ok(box.value)) "✓" else "✘"
     output.insertBefore(div(session.q.toString + s" ($sign)").render, output.firstChild)
     session = session.next(box.value)
+    updateStatus()
     showNextQuestion()
     box.value = ""
     box.focus()
+  }
+
+  def updateStatus() = {
+    statusDiv.innerHTML = ""
+    statusDiv.appendChild(
+      div(
+        div(session.status),
+        div(
+          style := "background-color: #ddd; height: 2vw; width: 10vw",
+          div(
+            style := s"background-color: #4CAF50; height: 100%;width:${session.progress}%"))).render)
   }
 
   def startSession() = {
@@ -58,11 +70,11 @@ object SessionComponent {
     output.innerHTML = ""
     setEnabled(true)
     showNextQuestion()
+    updateStatus()
   }
 
   def showNextQuestion() = {
     if (session.hasNext) {
-      statusDiv.textContent = session.status
       questionZone.innerHTML = session.q.q
       box.focus()
     } else closeSession()
@@ -83,8 +95,9 @@ object SessionComponent {
   case class Session(questions: Vector[Question], pos: Int = 0, goods: Int = 0, bads: Int = 0) {
     val size = questions.size
     val todo = size - pos
+    val progress = ((size - todo) * 100 / size).toInt // percentage completed
 
-    val status = s"$goods ✓, $bads ✘, $todo ? ($size)"
+    val status = s"$goods ✓, $bads ✘"
 
     def q = questions(pos)
 
