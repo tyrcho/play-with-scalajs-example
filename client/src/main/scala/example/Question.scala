@@ -14,6 +14,8 @@ case class Question(q: String, a: String, goods: Int = 0, bads: Int = 0) {
     if (total == 0) 0
     else if (goods == 0) -1
     else goods.toFloat / total
+
+  def check(ans: String) = ans.trim == a.trim
 }
 
 //object QuestionStore {
