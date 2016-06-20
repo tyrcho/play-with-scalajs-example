@@ -1,8 +1,9 @@
 package example
 
+import org.scalajs.dom.html.Input
+
 import scala.scalajs.js
 import scala.scalajs.js.Any._
-
 import org.scalajs.dom.raw.KeyboardEvent
 
 import scalatags.JsDom.all._
@@ -13,17 +14,17 @@ object SessionComponent {
 
   val questionZone = div(
     "question",
-    style := "font-size:10vw").render
+    style := "font-size:6vw").render
 
   val box = input(
     `type` := "number",
     autofocus := true,
-    style := "font-size:10vw",
+    style := "font-size:6vw; width:30vw",
     placeholder := "?").render
 
-  val output = div(style := "font-size:3vw").render
+  val output = div(style := "font-size:2vw").render
 
-  val stopButton = {
+  val stopButton: Input = {
     val i = input(
       `type` := "button",
       value := "Stop",
@@ -55,6 +56,7 @@ object SessionComponent {
   def startSession() = {
     session = Session(Vector.fill(10)(Judge.build()))
     output.innerHTML = ""
+    setEnabled(true)
     showNextQuestion()
   }
 
@@ -66,7 +68,13 @@ object SessionComponent {
     } else closeSession()
   }
 
+  private def setEnabled(en: Boolean) = {
+    val display = if (en) "" else "none"
+    Seq(stopButton, box, questionZone).foreach(_.style.display = display)
+  }
+
   private def closeSession() = {
+    setEnabled(false)
     ended()
   }
 
@@ -89,6 +97,8 @@ object SessionComponent {
       goods = goods + (if (ok(ans)) 1 else 0),
       bads = bads + (if (ok(ans)) 0 else 1)
     )
+
+    def ratio = goods.toFloat / size
   }
 
 }

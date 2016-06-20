@@ -26,14 +26,14 @@ object Judge {
       (op, gen) <- ALL_OP zip ALL_GEN
       if config(op)
       l = level(op)
-      a = nextInt(l)
-      b = nextInt(l)
+      a = nextInt(l, l * 3F / 5)
+      b = nextInt(l, 1)
     } yield gen(a, b)
     Random.shuffle(qs).head
   }
 
-  private def nextInt(max: Int) =
-    (util.Random.nextFloat() * max + 1).toInt
+  private def nextInt(max: Int, min: Float) =
+    (util.Random.nextFloat() * (max + 1 - min) + min).toInt
 
   type OperationGenerator = (Int, Int) => Question
 

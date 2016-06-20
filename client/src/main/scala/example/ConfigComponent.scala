@@ -15,30 +15,43 @@ object ConfigComponent {
   val render =
     div(
       ALL_OP.map(configCB),
-      style := "font-size:2vw;display:flex").render
+      style := "font-size:2vw").render
 
   def config = ConfigStore.readConf
+
   def level = ConfigStore.readLevel
+
+  def update(success: Boolean) = {
+    for {
+      (label, sel) <- config
+      if sel
+      lvlInput = js.Dynamic.global.document.getElementById(label + "level")
+    } {
+      if (success) lvlInput.stepUp()
+      else lvlInput.stepDown()
+      ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, lvlInput.value.asInstanceOf[String].toInt))
+    }
+  }
 
   def configCB(label: String) = {
     val i = input(`type` := "checkbox").render
     if (config(label)) i.checked = true
-    i.onchange = (e: Event) => (ConfigStore.writeConf(config.updated(label, i.checked)))
+    i.onchange = (e: Event) => ConfigStore.writeConf(config.updated(label, i.checked))
     val level = input(
       id := label + "level",
       value := ConfigStore.readLevel(label),
-      style := "width:2vw",
+      style := "width:3vw",
       `type` := "number",
       min := "1",
       max := "10").render
-    level.onchange = (e: Event) => (ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, level.value.toInt)))
+    level.onchange = (e: Event) => ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, level.value.toInt))
     div(i, label, level).render
   }
 
   object ConfigStore {
     def readConf: Config =
       LocalStorage("config") match {
-        case None       => Map("+" -> true, "-" -> false, "x" -> false, "/" -> false)
+        case None => Map("+" -> true, "-" -> false, "x" -> false, "/" -> false)
         case Some(conf) => read[Config](conf)
       }
 
@@ -47,7 +60,7 @@ object ConfigComponent {
 
     def readLevel: Level =
       LocalStorage("levels") match {
-        case None    => ALL_OP.map(o => o -> 2).toMap
+        case None => ALL_OP.map(o => o -> 2).toMap
         case Some(l) => read[Level](l)
       }
 
