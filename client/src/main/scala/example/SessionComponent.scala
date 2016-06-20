@@ -9,12 +9,12 @@ import scalatags.JsDom.all._
 import org.scalajs.dom.raw.MouseEvent
 
 object SessionComponent {
-  var questionPos = 0
-  val questions = Seq.fill(10)(Judge.build())
+  var session: Session = _
 
-  def q = questions(questionPos)
 
-  val questionZone = div("question", style := "font-size:10vw").render
+  val questionZone = div(
+    "question",
+    style := "font-size:10vw").render
 
   val box = input(
     `type` := "number",
@@ -44,23 +44,24 @@ object SessionComponent {
   box.onkeypress = (e: KeyboardEvent) => if (e.keyCode == 13) checkAnswer()
 
   def checkAnswer() = {
-    output.insertBefore(div(q.toString).render, output.firstChild)
+    output.insertBefore(div(session.q.toString).render, output.firstChild)
+    session = session.next(box.value)
     showNextQuestion()
     box.value = ""
     box.focus()
   }
 
   def startSession() = {
+    session = Session(Vector.fill(10)(Judge.build()))
     output.innerHTML = ""
-    questionPos = 0
     showNextQuestion()
   }
 
   def showNextQuestion() = {
-    questionPos += 1
-    if (questionPos < questions.size)
-      questionZone.innerHTML = q.q
-    else closeSession()
+    if (session.hasNext) {
+      questionZone.innerHTML = session.q.q
+      box.focus()
+    } else closeSession()
   }
 
   private def closeSession() = {
@@ -68,5 +69,22 @@ object SessionComponent {
   }
 
   var ended: (() => Unit) = () => ()
+
+  case class Session(questions: Vector[Question], pos: Int = 0, goods: Int = 0, bads: Int = 0) {
+    def todo = questions.size - pos
+
+    def q = questions(pos)
+
+    def ok(ans: String) = q.a == ans
+
+    def hasNext = pos < questions.size
+
+    def next(ans: String) = copy(
+      pos = pos + 1,
+      goods = goods + (if (ok(ans)) 1 else 0),
+      bads = bads + (if (ok(ans)) 0 else 1)
+    )
+  }
+
 }
 
