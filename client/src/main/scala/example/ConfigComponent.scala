@@ -43,7 +43,7 @@ object ConfigComponent {
       style := "width:3vw",
       `type` := "number",
       min := "1",
-      max := "10").render
+      max := "100").render
     level.onchange = (e: Event) => ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, level.value.toInt))
     div(i, label, level).render
   }
