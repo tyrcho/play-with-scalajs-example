@@ -37,14 +37,14 @@ object SessionComponent {
 
   val render =
     div(
-      questionZone,
       div(style := "display:flex", statusDiv, stopButton),
+      questionZone,
       div(box),
       output).render
 
   box.onkeypress = (e: KeyboardEvent) => if (e.keyCode == 13) checkAnswer()
 
-  def checkAnswer() = {
+  def checkAnswer() = if (box.value.trim != "") {
     val sign = if (session.ok(box.value)) "✓" else "✘"
     output.insertBefore(div(session.q.toString + s" ($sign)").render, output.firstChild)
     session = session.next(box.value)
@@ -66,7 +66,7 @@ object SessionComponent {
   }
 
   def startSession() = {
-    session = Session(Vector.fill(10)(Judge.build()))
+    session = Session(Vector.fill(10)(Judge.build()).distinct)
     output.innerHTML = ""
     setEnabled(true)
     showNextQuestion()
@@ -108,8 +108,7 @@ object SessionComponent {
     def next(ans: String) = copy(
       pos = pos + 1,
       goods = goods + (if (ok(ans)) 1 else 0),
-      bads = bads + (if (ok(ans)) 0 else 1)
-    )
+      bads = bads + (if (ok(ans)) 0 else 1))
 
     def ratio = goods.toFloat / size
   }

@@ -17,22 +17,3 @@ case class Question(q: String, a: String, goods: Int = 0, bads: Int = 0) {
 
   def check(ans: String) = ans.trim.dropWhile(_ == '0') == a.trim
 }
-
-//object QuestionStore {
-//
-//  type Questions = Map[String, Question]
-//
-//  def questions = readQuestions
-//
-//  def update(q: Question) =
-//    writeQuestions(readQuestions + (q.q -> q))
-//
-//  def readQuestions: Questions =
-//    LocalStorage("questions") match {
-//      case None    => Map.empty
-//      case Some(q) => read[Questions](q)
-//    }
-//
-//  def writeQuestions(q: Questions) =
-//    LocalStorage.update("questions", write(q))
-//}
