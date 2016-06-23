@@ -13,7 +13,7 @@ object ScalaJSExample extends js.JSApp {
   val root = document.getElementById("root")
 
   SessionComponent.ended = () => {
-    ConfigComponent.update(SessionComponent.session.ratio >= 0.9)
+    ConfigComponent.update(SessionComponent.session.ratio)
     startButton.disabled = false
     //root.removeChild(SessionComponent.render)
     startButton.focus()

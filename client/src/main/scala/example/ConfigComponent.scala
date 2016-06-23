@@ -21,14 +21,14 @@ object ConfigComponent {
 
   def level = ConfigStore.readLevel
 
-  def update(success: Boolean) = {
+  def update(ratio: Float) = {
     for {
       (label, sel) <- config
       if sel
       lvlInput = js.Dynamic.global.document.getElementById(label + "level")
     } {
-      if (success) lvlInput.stepUp()
-      else lvlInput.stepDown()
+      if (ratio >= 0.9) lvlInput.stepUp()
+      else if (ratio < 0.8) lvlInput.stepDown()
       ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, lvlInput.value.asInstanceOf[String].toInt))
     }
   }
@@ -51,7 +51,7 @@ object ConfigComponent {
   object ConfigStore {
     def readConf: Config =
       LocalStorage("config") match {
-        case None => Map("+" -> true, "-" -> false, "x" -> false, "/" -> false)
+        case None       => Map("+" -> true, "-" -> false, "x" -> false, "/" -> false)
         case Some(conf) => read[Config](conf)
       }
 
@@ -60,7 +60,7 @@ object ConfigComponent {
 
     def readLevel: Level =
       LocalStorage("levels") match {
-        case None => ALL_OP.map(o => o -> 2).toMap
+        case None    => ALL_OP.map(o => o -> 2).toMap
         case Some(l) => read[Level](l)
       }
 
