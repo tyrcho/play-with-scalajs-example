@@ -7,6 +7,7 @@ import org.scalajs.dom.raw.KeyboardEvent
 
 import scalatags.JsDom.all._
 import org.scalajs.dom.raw.MouseEvent
+import Components._
 
 object ScalaJSExample extends js.JSApp {
   val document = js.Dynamic.global.document
@@ -29,14 +30,7 @@ object ScalaJSExample extends js.JSApp {
     startButton.focus()
   }
 
-  val startButton = {
-    val i = input(
-      `type` := "button",
-      value := "Start",
-      style := "font-size:4vw").render
-    i.onclick = (e: MouseEvent) => startSession()
-    i
-  }
+  val startButton = buttonMaterial("play_arrow", startSession())
 
   def startSession() {
     startButton.disabled = true

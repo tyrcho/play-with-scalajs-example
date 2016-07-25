@@ -8,6 +8,8 @@ import org.scalajs.dom.raw.Event
 
 import scalatags.JsDom.all._
 import upickle.default._
+import Components._
+import org.scalajs.jquery.jQuery
 
 object ConfigComponent {
   val ALL_OP = Seq("+", "-", "x", "/")
@@ -34,8 +36,9 @@ object ConfigComponent {
   }
 
   def configCB(label: String) = {
-    val i = input(`type` := "checkbox").render
-    if (config(label)) i.checked = true
+    val cbId = s"tgl$label"
+    val (i, l) = toggle(cbId, label)
+    if (config(label)) jQuery(s"#$cbId").prop("checked", true).change()
     i.onchange = (e: Event) => ConfigStore.writeConf(config.updated(label, i.checked))
     val level = input(
       id := label + "level",
@@ -45,7 +48,7 @@ object ConfigComponent {
       min := "1",
       max := "100").render
     level.onchange = (e: Event) => ConfigStore.writeLevel(ConfigStore.readLevel.updated(label, level.value.toInt))
-    div(i, label, level).render
+    div(l, level).render
   }
 
   object ConfigStore {

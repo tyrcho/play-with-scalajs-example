@@ -27,6 +27,7 @@ lazy val client = (project in file("client")).settings(
   libraryDependencies ++= Seq(
     "com.lihaoyi" %%% "scalatags" % "0.5.5",
     "org.scala-js" %%% "scalajs-dom" % "0.9.0",
+    "be.doeraene" %%% "scalajs-jquery" % "0.9.0",
     "com.lihaoyi" %%% "upickle" % "0.4.1"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).

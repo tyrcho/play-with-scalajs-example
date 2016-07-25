@@ -1,6 +1,9 @@
 package example
 
 import org.scalajs.dom.html.Input
+import org.scalajs.dom.html.Button
+
+import Components._
 
 import scala.scalajs.js
 import scala.scalajs.js.Any._
@@ -25,14 +28,8 @@ object SessionComponent {
 
   val output = div(style := "font-size:4vw").render
 
-  val stopButton: Input = {
-    val i = input(
-      `type` := "button",
-      value := "Stop",
-      style := "font-size:3vw").render
-    i.onclick = (e: MouseEvent) => closeSession()
-    i
-  }
+  val stopButton: Button =
+    buttonMaterial("stop", closeSession())
 
   val statusDiv = div(style := "font-size:3vw").render
 
